@@ -11,8 +11,29 @@ then
   exit 1
 fi
 
-# get the username(login)
-read -p "Enter the username to create: " USER_NAME
+# get the username(login)， check if the username already exists
+UserNameListlength=$(cut -d: -f1 /etc/passwd | wc -l)
+while true
+do
+  cnt=0
+  read -p "Enter the username to create: " USER_NAME
+
+  for item in $(cut -d: -f1 /etc/passwd)
+  do
+    if [[ ${USER_NAME} != ${item} ]]
+    then
+      let cnt=cnt+1
+    fi
+  done
+  # echo "Counting number is: ${cnt}"
+  # echo "Actual length is: ${UserNameListlength}"
+  if [[ ${cnt} -eq ${UserNameListlength} ]]
+  then
+    break
+  else
+    echo "Username already exists! Try again~"
+  fi
+done
 
 # Get the real name (contents for the description field.).
 read -p "Enter the name of the person or application that will be using the account: " CONMMENT
